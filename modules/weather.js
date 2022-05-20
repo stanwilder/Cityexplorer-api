@@ -1,28 +1,35 @@
 'use strict';
 
 // REQUIRE
-let weatherData = require('../data/weather.json');
+const axios = require('axios');
 //USE
 
-function weather(req, res, next) {
+async function weather(req, res, next) {
   try {
-    console.log('I fired');
-    let searchForCity = req.query.searchQuery;
-    if (searchForCity !== 'Seattle' && searchForCity !== 'Amman' && searchForCity !== 'Paris') {
-      next(res.error);
-    } else {
-      let cityChosen = weatherData.find(city => city.city_name === searchForCity);
-      let arr = [];
-      // array for forecast object
-      console.log(cityChosen.data);
-      cityChosen.data.forEach(days => arr.push(new Forecast(days)));
-      res.send(arr);
-    }
+    let weatherData = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lang=en&lat=${lat}&lon=${lon}&days=3`;
+    // let searchForCity = req.query.searchQuery;
+    let lon = req.query.lon;
+    let lat = req.query.lat;
+    let weather = await axios.get(weatherData);
+    let arr = [];
+    // empty array for the forecast. 
+    weather.data.data.forEach(days => arr.push(new Forecast(days)));
 
+    res.send(arr);
   } catch (error) {
     next(error);
   }
+
 }
+class Forecast {
+  constructor(forcast) {
+    this.date = forcast.valid_date;
+    this.description = forcast.weather.description;
+    this.low = forcast.low_temp;
+    this.high = forcast.max_temp;
+  }
+}
+
 
 
 
@@ -30,10 +37,4 @@ function weather(req, res, next) {
 
 // Class
 
-class Forecast {
-  constructor(forcast) {
-    this.date = forcast.valid_date;
-    this.description = forcast.weather.description;
-  }
-}
 module.exports = weather;
