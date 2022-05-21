@@ -6,11 +6,13 @@ const axios = require('axios');
 
 async function weather(req, res, next) {
   try {
-    let weatherData = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lang=en&lat=${lat}&lon=${lon}&days=3`;
     // let searchForCity = req.query.searchQuery;
     let lon = req.query.lon;
     let lat = req.query.lat;
+    let weatherData = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lang=en&lat=${lat}&lon=${lon}&days=3`;
+    console.log(weatherData);
     let weather = await axios.get(weatherData);
+    console.log(weather);
     let arr = [];
     // empty array for the forecast. 
     weather.data.data.forEach(days => arr.push(new Forecast(days)));
