@@ -5,7 +5,7 @@
 // bring in express
 const express = require('express');
 
-
+const movies = require('./modules/movies.js');
 
 const weather = require('./modules/weather.js');
 
@@ -23,6 +23,8 @@ app.use(cors());
 const PORT = process.env.PORT || 3002;
 // Routes
 app.get('/weather', weather);
+
+app.get('/movies', movies);
 
 // Errors
 app.use((error, request, response, next) => {
